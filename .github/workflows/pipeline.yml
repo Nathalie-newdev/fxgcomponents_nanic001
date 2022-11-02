@@ -1,0 +1,34 @@
+name: DEPLOIEMENT
+on:
+  push:
+    branches: [ master ]
+jobs:
+  version:
+      runs-on: ubuntu-latest
+      if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            token: ${{ PERSONAL_ACCESS_TOKEN }}
+        - run: git config --global user.name '${{ GH_PUBLIC_NAME }}'
+        - run: git config --global user.email '${{ GH_EMAIL }}'
+        - run: npm version patch -m "[RELEASE] %s"
+        - run: git push
+        - run: git tag
+        - run: git push --tags
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 12
+      - run: npm install
+      - run: npm ci
+      - run: npm run build-lib
+      - run: npm test
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ NPM_TOKEN }}
+
+
