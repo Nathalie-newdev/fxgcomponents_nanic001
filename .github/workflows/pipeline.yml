@@ -9,7 +9,7 @@ jobs:
       steps:
         - uses: actions/checkout@v2
           with:
-           token: ${{ PERSONAL_ACCESS_TOKEN }}
+           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
         - run: git config --global user.name '${{ GH_PUBLIC_NAME }}'
         - run: git config --global user.email '${{ GH_EMAIL }}'
         - run: npm version patch -m "[RELEASE] %s"
